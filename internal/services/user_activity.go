@@ -6,13 +6,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-    "github.com/daniel-98-lab/github-user-activity/internal/models"
+
+	"github.com/daniel-98-lab/github-user-activity/internal/enums"
+	"github.com/daniel-98-lab/github-user-activity/internal/models"
 )
 
-type UserActivity struct {}
+type UserActivity struct{}
 
 // LoadEvents is a http fetch to give user events
-func (s *UserActivity) LoadEvents(user string) ([]models.Event, error) {
+func (s *UserActivity) LoadEvents(user string, eventTypeInput string) ([]models.Event, error) {
 
 	if user == "" {
 		return nil, errors.New("no user provided")
@@ -42,5 +44,27 @@ func (s *UserActivity) LoadEvents(user string) ([]models.Event, error) {
 		return nil, fmt.Errorf("error unmarshalling JSON: %v", err)
 	}
 
-	return events, nil
+	// If eventTypeInput is void, return all events
+	if eventTypeInput == "" {
+		return events, nil
+	}
+
+	eventType, err := enums.ValidateAndAssignEventType(eventTypeInput)
+
+	// Validate and Assign EventType
+	if err != nil {
+		fmt.Println("Error:", err)
+	} else {
+		fmt.Println("Event type valid:", eventType)
+	}
+
+	// Filter events by the provided type
+	var filteredEvents []models.Event
+	for _, event := range events {
+		if event.Type == enums.EventTypes(eventType) {
+			filteredEvents = append(filteredEvents, event)
+		}
+	}
+
+	return filteredEvents, nil
 }

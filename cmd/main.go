@@ -1,25 +1,27 @@
 package main
 
 import (
-    "fmt"
-    "os"
-    "strings"
-    "github.com/daniel-98-lab/github-user-activity/internal/services"
+	"fmt"
+	"os"
+	"strings"
+
+	"github.com/daniel-98-lab/github-user-activity/internal/services"
 )
 
 func main() {
 
-    service := services.UserActivity{};
+	service := services.UserActivity{}
 
-    if len(os.Args) < 1 {
-        fmt.Println("No user provided.")
-        return
-    }
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: user-activity <username> [eventType]")
+		return
+	}
 
-    args := os.Args
-	user := strings.Join(args[1:], " ")
+	args := os.Args
+	user := args[1]
+	event := strings.Join(args[2:], " ")
 
-	events, err := service.LoadEvents(user);
+	events, err := service.LoadEvents(user, event)
 
 	if err != nil {
 		fmt.Printf("Error loading events: %v\n", err)
