@@ -29,6 +29,6 @@ func main() {
 	}
 
 	for _, event := range events {
-		fmt.Printf("Event ID: %s, Type: %s\n", event.ID, event.Type)
+		service.PrintEventDetails(event)
 	}
 }
